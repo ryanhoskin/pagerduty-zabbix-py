@@ -65,6 +65,7 @@ class SimpleLogger(object):
         syslog.syslog(level, message)
 
 logger = SimpleLogger()
+proxy = "ENTER_YOUR_PROXY_HERE"
 
 class PagerDutyClient(object):
     """
@@ -85,6 +86,10 @@ class PagerDutyClient(object):
         retry = False
 
         try:
+            proxies = {"http": proxy, "https": proxy}
+            proxy_support = urllib2.ProxyHandler(proxies)
+            opener = urllib2.build_opener(proxy_support, urllib2.HTTPHandler(debuglevel=1))
+            urllib2.install_opener(opener)
             request = urllib2.Request(self.api_base)
             request.add_header("Content-type", "application/json")
             request.add_data(json_event)
